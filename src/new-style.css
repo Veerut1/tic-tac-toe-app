@@ -100,14 +100,44 @@ body {
 }
 
 .square.winner {
-  animation: winner-pulse 1s infinite;
-  background: rgba(0, 255, 136, 0.2);
+  animation: winner-pulse 1.5s infinite;
+  background: rgba(0, 255, 136, 0.3);
+  box-shadow: 
+    0 0 15px rgba(0, 255, 136, 0.5),
+    0 0 30px rgba(0, 255, 136, 0.3),
+    0 0 45px rgba(0, 255, 136, 0.1),
+    inset 0 0 15px rgba(0, 255, 136, 0.2);
+  z-index: 2;
+}
+
+.square.non-winner {
+  opacity: 0.3;
+  filter: grayscale(1);
+  transition: all 0.5s ease;
 }
 
 @keyframes winner-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% { 
+    transform: scale(1);
+    box-shadow: 
+      0 0 15px rgba(0, 255, 136, 0.5),
+      0 0 30px rgba(0, 255, 136, 0.3),
+      0 0 45px rgba(0, 255, 136, 0.1);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 
+      0 0 20px rgba(0, 255, 136, 0.6),
+      0 0 40px rgba(0, 255, 136, 0.4),
+      0 0 60px rgba(0, 255, 136, 0.2);
+  }
+  100% { 
+    transform: scale(1);
+    box-shadow: 
+      0 0 15px rgba(0, 255, 136, 0.5),
+      0 0 30px rgba(0, 255, 136, 0.3),
+      0 0 45px rgba(0, 255, 136, 0.1);
+  }
 }
 
 .game-info {

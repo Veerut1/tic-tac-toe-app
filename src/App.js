@@ -1,8 +1,8 @@
 import './new-style.css';
 import { useState } from 'react';
 
-function Square({ value, onSquareClick, isWinning }) {
-  const squareClass = `square ${value?.toLowerCase() || ''} ${isWinning ? 'winner' : ''}`;
+function Square({ value, onSquareClick, isWinning, isGameOver }) {
+  const squareClass = `square ${value?.toLowerCase() || ''} ${isWinning ? 'winner' : ''} ${isGameOver && !isWinning ? 'non-winner' : ''}`;
   
   return (
     <button className={squareClass} onClick={onSquareClick}>
@@ -26,7 +26,10 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {
+        winner: squares[a],
+        line: [a, b, c]
+      };
     }
   }
   
@@ -50,7 +53,7 @@ export function Board() {
     }
 
     currentSquares[i] = isXNext ? 'X' : 'O';
-    const winner = calculateWinner(currentSquares);
+    const result = calculateWinner(currentSquares);
     const isDraw = currentSquares.every(square => square !== null);
     
     setSquares(currentSquares);
@@ -58,12 +61,15 @@ export function Board() {
     setMoveNumber(moveNumber + 1);
     setIsXNext(!isXNext);
 
-    if (winner) {
-      setGameStatus(`Winner: ${winner}`);
+    if (result) {
+      setGameStatus(`Winner: ${result.winner}`);
+      setWinningLine(result.line);
     } else if (isDraw) {
       setGameStatus('Game ended in a draw!');
+      setWinningLine([]);
     } else {
       setGameStatus(`Next player: ${!isXNext ? 'X' : 'O'}`);
+      setWinningLine([]);
     }
   }
 
@@ -87,19 +93,64 @@ export function Board() {
       <div className="status">{gameStatus}</div>
       <div className="board">
         <div className="board-row">
-          <Square value={squares[0]} onSquareClick={() => handleClick(0)} isWinning={winningLine.includes(0)} />
-          <Square value={squares[1]} onSquareClick={() => handleClick(1)} isWinning={winningLine.includes(1)} />
-          <Square value={squares[2]} onSquareClick={() => handleClick(2)} isWinning={winningLine.includes(2)} />
+          <Square 
+            value={squares[0]} 
+            onSquareClick={() => handleClick(0)} 
+            isWinning={winningLine.includes(0)} 
+            isGameOver={winningLine.length > 0}
+          />
+          <Square 
+            value={squares[1]} 
+            onSquareClick={() => handleClick(1)} 
+            isWinning={winningLine.includes(1)} 
+            isGameOver={winningLine.length > 0}
+          />
+          <Square 
+            value={squares[2]} 
+            onSquareClick={() => handleClick(2)} 
+            isWinning={winningLine.includes(2)} 
+            isGameOver={winningLine.length > 0}
+          />
         </div>
         <div className="board-row">
-          <Square value={squares[3]} onSquareClick={() => handleClick(3)} isWinning={winningLine.includes(3)} />
-          <Square value={squares[4]} onSquareClick={() => handleClick(4)} isWinning={winningLine.includes(4)} />
-          <Square value={squares[5]} onSquareClick={() => handleClick(5)} isWinning={winningLine.includes(5)} />
+          <Square 
+            value={squares[3]} 
+            onSquareClick={() => handleClick(3)} 
+            isWinning={winningLine.includes(3)} 
+            isGameOver={winningLine.length > 0}
+          />
+          <Square 
+            value={squares[4]} 
+            onSquareClick={() => handleClick(4)} 
+            isWinning={winningLine.includes(4)} 
+            isGameOver={winningLine.length > 0}
+          />
+          <Square 
+            value={squares[5]} 
+            onSquareClick={() => handleClick(5)} 
+            isWinning={winningLine.includes(5)} 
+            isGameOver={winningLine.length > 0}
+          />
         </div>
         <div className="board-row">
-          <Square value={squares[6]} onSquareClick={() => handleClick(6)} isWinning={winningLine.includes(6)} />
-          <Square value={squares[7]} onSquareClick={() => handleClick(7)} isWinning={winningLine.includes(7)} />
-          <Square value={squares[8]} onSquareClick={() => handleClick(8)} isWinning={winningLine.includes(8)} />
+          <Square 
+            value={squares[6]} 
+            onSquareClick={() => handleClick(6)} 
+            isWinning={winningLine.includes(6)} 
+            isGameOver={winningLine.length > 0}
+          />
+          <Square 
+            value={squares[7]} 
+            onSquareClick={() => handleClick(7)} 
+            isWinning={winningLine.includes(7)} 
+            isGameOver={winningLine.length > 0}
+          />
+          <Square 
+            value={squares[8]} 
+            onSquareClick={() => handleClick(8)} 
+            isWinning={winningLine.includes(8)} 
+            isGameOver={winningLine.length > 0}
+          />
         </div>
       </div>
       <div className="game-info">
