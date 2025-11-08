@@ -1,38 +1,269 @@
-.App {
-  text-align: center;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
+:root {
+  --board-bg: #2a2a72;
+  --board-border: #4a4a8a;
+  --square-bg: #1a1a4a;
+  --x-color: #00ff88;
+  --o-color: #ff4d4d;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  perspective: 1500px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+
+.game-container {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(8px);
+  transform-style: preserve-3d;
+  animation: float 6s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0) rotateX(10deg);
+  }
+  50% { 
+    transform: translateY(-15px) rotateX(15deg);
+  }
+}
+
+.board {
+  background: var(--board-bg);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 
+    0 0 20px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(0, 0, 255, 0.1),
+    inset 0 0 15px rgba(0, 0, 255, 0.2);
+  transform-style: flat;
+  transform: rotateX(10deg);
+  transition: transform 0.3s ease;
+  margin: 20px auto;
+  position: relative;
+  z-index: 2;
+  perspective: none;
+}
+
+.board::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #4a90e2, #357abd);
+  border-radius: 17px;
+  z-index: -1;
+}
+
+.board-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.board-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Reset z-index stacking and ensure all rows are clickable */
+.board-row {
+  z-index: auto;
+}
+
+.square {
+  width: 100px;
+  height: 100px;
+  border: none;
+  border-radius: 10px;
+  background: var(--square-bg);
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  transform: none;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    inset 0 0 10px rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  user-select: none;
+  /* Ensure clickability */
+  z-index: 10;
+  pointer-events: all;
+}
+}
+
+.square::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 10px;
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.square:hover {
+  transform: translateZ(5px) scale(1.05);
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.3),
+    inset 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Add active state for better feedback */
+.square:active {
+  transform: translateZ(2px) scale(0.98);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.square.x {
+  color: var(--x-color);
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.square.o {
+  color: var(--o-color);
+  text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+}
+
+.square.winner {
+  animation: winner-pulse 1.5s infinite;
+  background: rgba(0, 255, 136, 0.2);
+  box-shadow: 
+    0 0 20px rgba(0, 255, 136, 0.3),
+    inset 0 0 15px rgba(0, 255, 136, 0.2);
+}
+
+@keyframes winner-pulse {
+  0% { transform: translateZ(10px) scale(1); }
+  50% { transform: translateZ(20px) scale(1.05); }
+  100% { transform: translateZ(10px) scale(1); }
+}
+
+.status {
+  font-size: 2rem;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0 0 20px rgba(255, 255, 255, 0.2);
+  transform: translateZ(30px);
+}
+
+.game-info {
+  margin-top: 2rem;
+  text-align: center;
+  transform: translateZ(20px);
+}
+
+.reset-button {
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+  margin-bottom: 1rem;
+}
+
+.reset-button:hover {
+  transform: translateY(-2px) translateZ(5px);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+}
+
+.moves {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.move-button {
+  background: rgba(255, 255, 255, 0.1);
   color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
 }
 
-.App-link {
-  color: #61dafb;
+.move-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateZ(5px);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Neon glow effect for the board grid */
+.board::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, #4a90e2, #357abd);
+  z-index: -1;
+  border-radius: 20px;
+  filter: blur(20px);
+  opacity: 0.5;
+}
+
+/* Add responsive design */
+@media (max-width: 600px) {
+  .square {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .status {
+    font-size: 1.5rem;
+  }
+
+  .game-container {
+    padding: 1rem;
   }
 }
